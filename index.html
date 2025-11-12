@@ -1,0 +1,73 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Beast Reader Lotto</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              'neon-cyan': '#00ffff',
+              'neon-pink': '#ff00ff',
+              'neon-green': '#39ff14',
+              'dark-bg': '#0a0a0a',
+              'dark-card': '#1a1a1a',
+              'dark-surface': '#2a2a2a',
+              'light-bg': '#f3f0e3',
+              'light-card': '#ffffff',
+              'light-surface': '#fbf9f0',
+            },
+            boxShadow: {
+              'neon': '0 0 5px theme(colors.neon-cyan), 0 0 10px theme(colors.neon-cyan), 0 0 15px theme(colors.neon-cyan)',
+              'neon-sm': '0 0 3px theme(colors.neon-cyan), 0 0 6px theme(colors.neon-cyan)',
+              'neon-green': '0 0 5px theme(colors.neon-green), 0 0 10px theme(colors.neon-green)',
+            },
+            keyframes: {
+              pulse: {
+                '0%, 100%': { opacity: 1, transform: 'scale(1)' },
+                '50%': { opacity: 0.9, transform: 'scale(1.02)' },
+              },
+              'fade-in': {
+                '0%': { opacity: 0, transform: 'translateY(-10px)' },
+                '100%': { opacity: 1, transform: 'translateY(0)' },
+              },
+               'spinner-bounce': {
+                '0%, 100%': { transform: 'scale(0.0)' },
+                '50%': { transform: 'scale(1.0)' },
+              }
+            },
+            animation: {
+              pulse: 'pulse 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+              'fade-in': 'fade-in 0.5s ease-out forwards',
+              'spinner-bounce': 'spinner-bounce 2.0s infinite ease-in-out',
+            }
+          },
+        },
+      }
+    </script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script type="importmap">
+{
+  "imports": {
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.29.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "html2canvas": "https://aistudiocdn.com/html2canvas@^1.4.1"
+  }
+}
+</script>
+</head>
+  <body class="bg-light-bg dark:bg-dark-bg transition-colors duration-300">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
