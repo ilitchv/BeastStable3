@@ -1,5 +1,7 @@
 {
-  "name": "Copy of Copy of BackUp Estable Beast Reader Lott3",
+  "name": "BackUp Estable Beast Reader Lott4",
   "description": "An interactive and gamified lottery betting application that allows users to easily place bets, use a powerful 'Wizard' for quick entries, and even capture tickets via image recognition with AI.",
-  "requestFramePermissions": []
+  "requestFramePermissions": [
+    "microphone"
+  ]
 }

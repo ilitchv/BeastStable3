@@ -1,4 +1,3 @@
-
 export interface Play {
   id: number;
   betNumber: string;
@@ -31,4 +30,21 @@ export interface OcrResult {
   straightAmount: number | null;
   boxAmount: number | null;
   comboAmount: number | null;
+}
+
+export interface CopiedWagers {
+  straightAmount: number | null;
+  boxAmount: number | null;
+  comboAmount: number | null;
+}
+
+// Types for the new AI Chatbot
+export type ChatUser = 'user' | 'bot' | 'system';
+
+export interface ChatMessage {
+  id: number;
+  user: ChatUser;
+  text?: string;
+  ocrResults?: OcrResult[];
+  isLoading?: boolean;
 }

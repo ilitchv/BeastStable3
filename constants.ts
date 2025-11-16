@@ -20,6 +20,7 @@ export const TRACK_CATEGORIES: TrackCategory[] = [
       { name: 'Georgia Night', id: 'Georgia Night' },
       { name: 'Pensilvania AM', id: 'Pensilvania AM' },
       { name: 'Pensilvania PM', id: 'Pensilvania PM' },
+      { name: 'Pulito', id: 'Pulito' },
       { name: 'Venezuela', id: 'Venezuela' },
       { name: 'Brooklyn Midday', id: 'Brooklyn Midday' },
       { name: 'Brooklyn Evening', id: 'Brooklyn Evening' },
@@ -60,7 +61,8 @@ export const CUTOFF_TIMES: { [key: string]: string } = {
     "Connecticut Evening": "22:00", 
     "Georgia Night": "22:00", 
     "Pensilvania AM": "12:45", 
-    "Pensilvania PM": "18:15", 
+    "Pensilvania PM": "18:15",
+    "Pulito": "23:59", // No real cutoff
     "Venezuela": "23:59", // No real cutoff
     "Brooklyn Midday": "14:20", 
     "Brooklyn Evening": "22:00", 

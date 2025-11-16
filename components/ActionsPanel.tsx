@@ -31,12 +31,19 @@ interface ActionsPanelProps {
     onReset: () => void;
     onOpenOcr: () => void;
     onOpenWizard: () => void;
+    onOpenChatbot: () => void;
     onGenerateTicket: () => void;
     isTicketGenerationDisabled: boolean;
+    onPasteWagers: () => void;
+    hasCopiedWagers: boolean;
+    hasSelectedPlays: boolean;
 }
 
 const ActionsPanel: React.FC<ActionsPanelProps> = (props) => {
-    const { onAddPlay, onDeleteSelected, onReset, onOpenOcr, onOpenWizard, onGenerateTicket, isTicketGenerationDisabled } = props;
+    const { 
+        onAddPlay, onDeleteSelected, onReset, onOpenOcr, onOpenWizard, onOpenChatbot, onGenerateTicket, isTicketGenerationDisabled,
+        onPasteWagers, hasCopiedWagers, hasSelectedPlays
+    } = props;
 
     const actions = [
         {
@@ -56,6 +63,19 @@ const ActionsPanel: React.FC<ActionsPanelProps> = (props) => {
             icon: <svg data-lucide="scan-line" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M7 12h10"/></svg>,
             onClick: onOpenOcr,
             color: 'bg-orange-500',
+        },
+        {
+            label: 'AI Assistant',
+            icon: <svg data-lucide="message-circle" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>,
+            onClick: onOpenChatbot,
+            color: 'bg-cyan-500',
+        },
+         {
+            label: 'Paste Wagers',
+            icon: <svg data-lucide="clipboard-paste" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 2H9a2 2 0 0 0-2 2v2H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-2V4a2 2 0 0 0-2-2Z"/><path d="M9 2v4h6V2"/><path d="M12 12v6"/><path d="M9 15h6"/></svg>,
+            onClick: onPasteWagers,
+            color: 'bg-gray-500',
+            disabled: !hasCopiedWagers || !hasSelectedPlays,
         },
         {
             label: 'Delete Sel.',
@@ -80,7 +100,7 @@ const ActionsPanel: React.FC<ActionsPanelProps> = (props) => {
 
     return (
         <div className="bg-light-card dark:bg-dark-card p-3 rounded-xl shadow-lg animate-fade-in">
-            <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+            <div className="grid grid-cols-4 sm:grid-cols-8 gap-2">
                 {actions.map(action => (
                     <ActionButton
                         key={action.label}

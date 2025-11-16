@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import type { WizardPlay } from '../types';
 import { determineGameMode, calculateRowTotal } from '../utils/helpers';
@@ -8,9 +7,10 @@ interface WizardModalProps {
   onClose: () => void;
   onAddPlays: (plays: WizardPlay[]) => void;
   selectedTracks: string[];
+  pulitoPositions: number[];
 }
 
-const WizardModal: React.FC<WizardModalProps> = ({ isOpen, onClose, onAddPlays, selectedTracks }) => {
+const WizardModal: React.FC<WizardModalProps> = ({ isOpen, onClose, onAddPlays, selectedTracks, pulitoPositions }) => {
     const [plays, setPlays] = useState<WizardPlay[]>([]);
     const [betNumber, setBetNumber] = useState('');
     const [straight, setStraight] = useState<number | null>(null);
@@ -34,7 +34,7 @@ const WizardModal: React.FC<WizardModalProps> = ({ isOpen, onClose, onAddPlays, 
 
     const handleAddNext = () => {
         if (!betNumber) return;
-        const gameMode = determineGameMode(betNumber, selectedTracks);
+        const gameMode = determineGameMode(betNumber, selectedTracks, pulitoPositions);
         if (gameMode === '-') {
             alert(`Invalid bet number format or length for selected tracks.`);
             return;
@@ -47,18 +47,29 @@ const WizardModal: React.FC<WizardModalProps> = ({ isOpen, onClose, onAddPlays, 
         const newPlays: WizardPlay[] = [];
         for (let i = 0; i < qpCount; i++) {
             let numStr = '';
+            let gameMode = qpMode;
             switch(qpMode) {
                 case 'Pick 3': numStr = String(Math.floor(Math.random() * 1000)).padStart(3, '0'); break;
                 case 'Win 4': numStr = String(Math.floor(Math.random() * 10000)).padStart(4, '0'); break;
-                case 'Pulito': numStr = String(Math.floor(Math.random() * 100)).padStart(2, '0'); break;
+                case 'Pick 2': numStr = String(Math.floor(Math.random() * 100)).padStart(2, '0'); break;
                 case 'Pale-RD': 
                     const n1 = String(Math.floor(Math.random() * 100)).padStart(2, '0');
                     const n2 = String(Math.floor(Math.random() * 100)).padStart(2, '0');
                     numStr = `${n1}-${n2}`;
                     break;
             }
+            if (qpMode === 'Pulito') {
+                numStr = String(Math.floor(Math.random() * 100)).padStart(2, '0');
+                // Determine the actual game mode based on selections
+                gameMode = determineGameMode(numStr, selectedTracks, pulitoPositions);
+                if (!gameMode.startsWith('Pulito')) {
+                    // Fallback if the special track isn't actually selected
+                    gameMode = 'Pick 2';
+                }
+            }
+            
             if(numStr) {
-                 newPlays.push({ betNumber: numStr, gameMode: qpMode, straight, box, combo });
+                 newPlays.push({ betNumber: numStr, gameMode, straight, box, combo });
             }
         }
         setPlays(prev => [...prev, ...newPlays]);
@@ -84,11 +95,11 @@ const WizardModal: React.FC<WizardModalProps> = ({ isOpen, onClose, onAddPlays, 
             <div className="bg-light-card dark:bg-dark-card rounded-xl shadow-lg w-full max-w-4xl max-h-[90vh] flex flex-col" onClick={e => e.stopPropagation()}>
                 <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
                     <h2 className="text-lg font-bold text-neon-cyan flex items-center gap-2">
-                        <svg data-lucide="magic-wand-2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 4V2"/><path d="M15 16v-2"/><path d="M8 9h2"/><path d="M20 9h2"/><path d="M17.8 11.8 19 13"/><path d="M15 9h.01"/><path d="M17.8 6.2 19 5"/><path d="m3 21 9-9"/><path d="M12.2 6.2 11 5"/></svg>
+                        <svg data-lucide="magic-wand-2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 4V2"/><path d="M15 16v-2"/><path d="M8 9h2"/><path d="M20 9h2"/><path d="M17.8 11.8 19 13"/><path d="M15 9h.01"/><path d="M17.8 6.2 19 5"/><path d="m3 21 9-9"/><path d="M12.2 6.2 11 5"/></svg>
                         Quick Entry Wizard
                     </h2>
                     <button onClick={onClose} className="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700">
-                        <svg data-lucide="x" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                        <svg data-lucide="x" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
                     </button>
                 </div>
 
@@ -117,6 +128,7 @@ const WizardModal: React.FC<WizardModalProps> = ({ isOpen, onClose, onAddPlays, 
                                 <select value={qpMode} onChange={e => setQpMode(e.target.value)} className="w-full bg-light-card dark:bg-dark-card p-2 rounded-lg border-2 border-transparent focus:border-neon-cyan focus:outline-none">
                                     <option>Pick 3</option>
                                     <option>Win 4</option>
+                                    <option value="Pick 2">Pick 2</option>
                                     <option>Pulito</option>
                                     <option>Pale-RD</option>
                                 </select>
@@ -143,7 +155,7 @@ const WizardModal: React.FC<WizardModalProps> = ({ isOpen, onClose, onAddPlays, 
                                     <td className="p-1 font-mono">${calculateRowTotal(p.betNumber, p.gameMode, p.straight, p.box, p.combo).toFixed(2)}</td>
                                     <td className="p-1">
                                         <button onClick={() => setPlays(plays.filter((_, idx) => idx !== i))} className="text-red-500">
-                                            <svg data-lucide="x-circle" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
+                                            <svg data-lucide="x-circle" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
                                         </button>
                                     </td>
                                 </tr>)}

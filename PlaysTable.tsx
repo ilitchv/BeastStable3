@@ -1,3 +1,4 @@
+
 import React from 'react';
 import type { Play } from '../types';
 import { MAX_PLAYS } from '../constants';
@@ -35,6 +36,7 @@ const PlaysTable: React.FC<PlaysTableProps> = ({ plays, updatePlay, deletePlay, 
   
   const renderInput = (play: Play, field: 'straightAmount' | 'boxAmount' | 'comboAmount') => {
     const isComboDisabled = (field === 'comboAmount' && (play.gameMode !== 'Pick 3' && play.gameMode !== 'Win 4')) || play.gameMode === '-';
+    const isInvalid = !play.betNumber || play.gameMode === '-' || calculateRowTotal(play.betNumber, play.gameMode, play.straightAmount, play.boxAmount, play.comboAmount) <= 0;
     
     return (
         <input
@@ -64,14 +66,13 @@ const PlaysTable: React.FC<PlaysTableProps> = ({ plays, updatePlay, deletePlay, 
                   className="w-4 h-4 rounded text-neon-cyan bg-gray-300 border-gray-400 focus:ring-neon-cyan focus:ring-2"
                 />
               </th>
-              {/* FIX: Added dark mode text color classes to all table headers */}
-              <th className="p-2 text-gray-500 dark:text-gray-400 uppercase text-xs font-semibold">#</th>
-              <th className="p-2 min-w-[100px] text-gray-500 dark:text-gray-400 uppercase text-xs font-semibold">Bet Number</th>
-              <th className="p-2 text-gray-500 dark:text-gray-400 uppercase text-xs font-semibold">Mode</th>
-              <th className="p-2 min-w-[80px] text-gray-500 dark:text-gray-400 uppercase text-xs font-semibold">Straight</th>
-              <th className="p-2 min-w-[80px] text-gray-500 dark:text-gray-400 uppercase text-xs font-semibold">Box</th>
-              <th className="p-2 min-w-[80px] text-gray-500 dark:text-gray-400 uppercase text-xs font-semibold">Combo</th>
-              <th className="p-2 text-right text-gray-500 dark:text-gray-400 uppercase text-xs font-semibold">Total</th>
+              <th className="p-2">#</th>
+              <th className="p-2 min-w-[100px]">Bet Number</th>
+              <th className="p-2">Mode</th>
+              <th className="p-2 min-w-[80px]">Straight</th>
+              <th className="p-2 min-w-[80px]">Box</th>
+              <th className="p-2 min-w-[80px]">Combo</th>
+              <th className="p-2 text-right">Total</th>
               <th className="p-2 w-12"></th>
             </tr>
           </thead>
@@ -105,16 +106,14 @@ const PlaysTable: React.FC<PlaysTableProps> = ({ plays, updatePlay, deletePlay, 
                       placeholder="e.g. 123"
                     />
                   </td>
-                  {/* FIX: Added dark mode text color to game mode cell */}
-                  <td className="p-2 font-mono text-xs text-gray-700 dark:text-gray-300">{play.gameMode}</td>
+                  <td className="p-2 font-mono text-xs">{play.gameMode}</td>
                   <td className="p-2">{renderInput(play, 'straightAmount')}</td>
                   <td className="p-2">{renderInput(play, 'boxAmount')}</td>
                   <td className="p-2">{renderInput(play, 'comboAmount')}</td>
                   <td className="p-1 text-right">
                     <button
                         onClick={() => onCopyWagers(play)}
-                        /* FIX: Added dark mode text color to total button */
-                        className="w-full h-full p-1.5 rounded-md font-bold text-center hover:bg-neon-cyan/20 dark:hover:bg-neon-cyan/10 transition-colors flex items-center justify-center gap-2 group text-gray-900 dark:text-gray-200"
+                        className="w-full h-full p-1.5 rounded-md font-bold text-center hover:bg-neon-cyan/20 dark:hover:bg-neon-cyan/10 transition-colors flex items-center justify-center gap-2 group"
                         title="Copy wagers from this row"
                     >
                         <span>${calculateRowTotal(play.betNumber, play.gameMode, play.straightAmount, play.boxAmount, play.comboAmount).toFixed(2)}</span>

@@ -1,9 +1,9 @@
-
-export const determineGameMode = (betNumber: string, selectedTracks: string[]): string => {
+export const determineGameMode = (betNumber: string, selectedTracks: string[], pulitoPositions: number[]): string => {
     if (!betNumber) return "-";
     
-    const isUSA = selectedTracks.some(t => ["New York", "Georgia", "New Jersey", "Florida", "Connecticut", "Pensilvania", "Brooklyn", "Front"].some(s => t.includes(s)));
+    const isUSA = selectedTracks.some(t => ["New York", "Georgia", "New Jersey", "Florida", "Connecticut", "Pensilvania", "Brooklyn", "Front", "Pulito", "Horses"].some(s => t.includes(s)));
     const isSD = selectedTracks.some(t => ["Real", "Gana mas", "Loteka", "Nacional", "Quiniela Pale", "Primera", "Suerte", "Lotería", "Lotedom", "Panama"].some(s => t.includes(s)));
+    const isVenezuela = selectedTracks.includes('Venezuela');
 
     const cleanBetNumber = String(betNumber).replace(/[^0-9-]/g, '');
     const paleRegex = /^\d{2}-\d{2}$/;
@@ -14,7 +14,19 @@ export const determineGameMode = (betNumber: string, selectedTracks: string[]): 
 
     const length = cleanBetNumber.replace(/-/g, '').length;
 
-    if (length === 2) return isSD ? "RD-Quiniela" : "Pulito";
+    if (length === 1 && isUSA) {
+        return "Single Action";
+    }
+
+    if (length === 2) {
+        if (selectedTracks.includes('Pulito') && pulitoPositions.length > 0) {
+            return `Pulito-${pulitoPositions.sort((a, b) => a - b).join(',')}`;
+        }
+        if (isVenezuela) {
+            return "Venezuela";
+        }
+        return isSD ? "RD-Quiniela" : "Pick 2";
+    }
     if (length === 3) return "Pick 3";
     if (length === 4) return "Win 4";
 
@@ -38,7 +50,13 @@ export const calculateRowTotal = (betNumber: string, gameMode: string, stVal: nu
     const bx = bxVal ?? 0;
     const co = coVal ?? 0;
 
-    if (["Pale-RD", "Palé", "RD-Quiniela", "Pulito"].includes(gameMode)) {
+    if (gameMode.startsWith("Pulito-")) {
+        const positionsPart = gameMode.split('-')[1] || '';
+        const positionCount = positionsPart ? positionsPart.split(',').length : 1;
+        return (st + bx) * Math.max(1, positionCount);
+    }
+
+    if (["Pale-RD", "Palé", "RD-Quiniela", "Pick 2", "Venezuela", "Single Action"].includes(gameMode)) {
         return st + bx;
     }
     
